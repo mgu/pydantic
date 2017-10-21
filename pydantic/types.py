@@ -1,5 +1,6 @@
 import re
 from typing import Optional, Type, Union
+from uuid import UUID
 
 from .utils import import_string, make_dsn, validate_email
 from .validators import str_validator
@@ -20,6 +21,7 @@ __all__ = [
     'conint',
     'PositiveInt',
     'NegativeInt',
+    'UUIDStr',
 ]
 
 NoneStr = Optional[str]
@@ -184,6 +186,17 @@ class PositiveInt(ConstrainedInt):
 
 class NegativeInt(ConstrainedInt):
     lt = 0
+
+
+class UUIDStr(str):
+    @classmethod
+    def get_validators(cls):
+        yield str_validator
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, value: str) -> str:
+        return str(UUID(value))
 
 
 # TODO, JsonEither, JsonList, JsonDict

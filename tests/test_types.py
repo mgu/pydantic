@@ -2,10 +2,11 @@ import os
 from collections import OrderedDict
 from datetime import date, datetime, time, timedelta
 from enum import Enum, IntEnum
+from uuid import uuid4
 
 import pytest
 
-from pydantic import (DSN, BaseModel, EmailStr, NameEmail, NegativeInt, PositiveInt, PyObject, StrictStr,
+from pydantic import (DSN, BaseModel, EmailStr, NameEmail, NegativeInt, PositiveInt, PyObject, StrictStr, UUIDStr,
                       ValidationError, conint, constr)
 
 
@@ -396,3 +397,17 @@ def test_strict_str():
 
     with pytest.raises(ValidationError):
         Model(v=b'foobar')
+
+
+class UUIDModel(BaseModel):
+    v: UUIDStr = uuid4()
+
+def test_uuid():
+
+    v = str(uuid4())
+    m = UUIDModel(v=v)
+    print(m.v)
+    assert m.v == v
+
+    with pytest.raises(ValueError):
+        UUIDModel(v='not-a-uuid')
